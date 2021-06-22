@@ -2,14 +2,14 @@ import unittest
 
 import requests
 
-from todo.models.task_model import Task, create_tables, drop_tables, filling_db
+from todo.models.task_model import Task, reset_db
 
 
 class ApiTest(unittest.TestCase):
     API_URL = "http://127.0.0.1:5000/api"
     TASKS_URL = f"{API_URL}/task/"
     TEST_DAO = Task()
-    ID = 7
+    ID = 11
     TASK_OBJ = {"id": ID, "title": "Internship at GARPIX", "content": "Complete test task"}
     NEW_TASK_OBJ = {
         "id": ID,
@@ -19,9 +19,7 @@ class ApiTest(unittest.TestCase):
 
     def __init__(self, methodName: str) -> None:
         super().__init__(methodName=methodName)
-        drop_tables()
-        create_tables()
-        filling_db()
+        reset_db()
 
     def _get_each_task_url(self, id):
         return f"{self.TASKS_URL}{id}"
@@ -30,7 +28,7 @@ class ApiTest(unittest.TestCase):
     def test_1_get_all_tasks(self):
         r = requests.get(self.TASKS_URL)
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(len(r.json()), 6)
+        self.assertEqual(len(r.json()), 10)
 
     # POST request to /api/task to create a new task
     def test_2_add_new_task(self):

@@ -29,10 +29,11 @@ class Task(BaseModel):
         return tasks_json
 
     def get_task(self, id):
-        task = Task.select().where(Task.id == id).get()
-        if task:
+        try:
+            task = Task.select().where(Task.id == id).get()
             return task
-        abort(404, f"Todo {id} doesn't exist")
+        except:
+            abort(404, f"Todo {id} doesn't exist")
 
     def create_task(self, data):
         note = Task(title=data["title"], content=data["content"], done=False)
@@ -40,17 +41,18 @@ class Task(BaseModel):
         return note
 
     def update_task(self, id, data):
-        task = Task.select().where(Task.id == id).get()
-        if not task:
-            abort(404)
-        if not "title" in data:
-            abort(400)
-        if not "content" in data:
-            abort(400)
-        task.title = data["title"]
-        task.content = data["content"]
-        task.save()
-        return task
+        try:
+            task = Task.select().where(Task.id == id).get()
+            if not "title" in data:
+                abort(400)
+            if not "content" in data:
+                abort(400)
+            task.title = data["title"]
+            task.content = data["content"]
+            task.save()
+            return task
+        except:
+            abort(404, f"Todo {id} doesn't exist")
 
     def delete_task(self, id):
         try:
@@ -64,21 +66,26 @@ MODELS = [
 ]
 
 
-def create_tables():
-    with db:
-        db.create_tables(MODELS)
-
-
-def drop_tables():
+def reset_db():
     with db:
         db.drop_tables(MODELS)
-
-
-def filling_db():
+        db.create_tables(MODELS)
     DAO = Task()
-    DAO.create_task({"title": "Buy milk", "content": "Buy the most delicious milk"})
-    DAO.create_task({"title": "Buy bread", "content": "Buy the most delicious bread"})
-    DAO.create_task({"title": "Buy butter", "content": "Buy the most delicious butter"})
-    DAO.create_task({"title": "Buy milk", "content": "Buy the most delicious milk"})
-    DAO.create_task({"title": "Buy bread", "content": "Buy the most delicious bread"})
-    DAO.create_task({"title": "Buy butter", "content": "Buy the most delicious butter"})
+
+    # Populating a dictionary using a dictionary generator
+    i = 0
+    while i < 10:
+        dic = {x: y for x, y in zip(("title", "content"), ("Buy milk", "Buy the most delicious milk"))}
+        DAO.create_task(dic)
+        i += 1
+
+    # DAO.create_task({"title": "Buy milk", "content": "Buy the most delicious milk"})
+    # DAO.create_task({"title": "Buy bread", "content": "Buy the most delicious bread"})
+    # DAO.create_task({"title": "Buy butter", "content": "Buy the most delicious butter"})
+    # DAO.create_task({"title": "Buy milk", "content": "Buy the most delicious milk"})
+    # DAO.create_task({"title": "Buy bread", "content": "Buy the most delicious bread"})
+    # DAO.create_task({"title": "Buy butter", "content": "Buy the most delicious butter"})
+    # DAO.create_task({"title": "Buy milk", "content": "Buy the most delicious milk"})
+    # DAO.create_task({"title": "Buy bread", "content": "Buy the most delicious bread"})
+    # DAO.create_task({"title": "Buy butter", "content": "Buy the most delicious butter"})
+    # DAO.create_task({"title": "Buy butter", "content": "Buy the most delicious butter"})
