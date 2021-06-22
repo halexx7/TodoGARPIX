@@ -2,7 +2,7 @@ import unittest
 
 import requests
 
-from todo.models.task_model import Task
+from todo.models.task_model import Task, create_tables, drop_tables, filling_db
 
 
 class ApiTest(unittest.TestCase):
@@ -16,6 +16,12 @@ class ApiTest(unittest.TestCase):
         "title": "I completed an internship at GARPIX",
         "content": "Successfully completed my internship and work at GARPIX",
     }
+
+    def __init__(self, methodName: str) -> None:
+        super().__init__(methodName=methodName)
+        drop_tables()
+        create_tables()
+        filling_db()
 
     def _get_each_task_url(self, id):
         return f"{self.TASKS_URL}{id}"
